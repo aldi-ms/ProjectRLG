@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
-    public interface ICell : IBaseObject, IPosition
+    using ProjectRLG.Infrastructure.FieldOfView;
+
+    public interface ICell : IBaseObject, IPosition, IFovCell
     {
         ITerrain Terrain { get; set; }
         IActor Actor { get; set; }

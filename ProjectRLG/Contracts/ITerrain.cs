@@ -2,7 +2,7 @@
 {
     public interface ITerrain
     {
-        int Difficulty { get; set; }
+        byte Difficulty { get; set; }
         IGlyph Glyph { get; set; }
     }
 }

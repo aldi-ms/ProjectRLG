@@ -7,18 +7,24 @@
 
     public class CellCollection : ICellCollection
     {
-        private ICell[][] data;
+        private ICell[][] _data;
 
         public CellCollection(int width, int height)
         {
-            this.Initialize(width, height);
+            width = Math.Abs(width);
+            height = Math.Abs(height);
+            _data = CreateEmptyICellMatrix(width, height);
         }
-        
+        public CellCollection(ICell[][] cells)
+        {
+            _data = cells;
+        }
+
         public int Count
         {
-            get 
+            get
             {
-                List<ICell> result = this.data.SelectMany(x => x, (y, el) => el).ToList();
+                List<ICell> result = this._data.SelectMany(x => x, (y, el) => el).ToList();
                 return result.Count;
             }
         }
@@ -33,41 +39,40 @@
         {
             get
             {
-                return data.Length;
+                return _data.Length;
             }
         }
         public int Height
         {
             get
             {
-                return data[0].Length;
+                return _data[0].Length;
             }
         }
         public ICell this[int x, int y]
         {
             get
             {
-                return data[x][y];
+                return _data[x][y];
             }
 
             set
             {
-                data[x][y] = value;
+                _data[x][y] = value;
             }
         }
 
         public void Clear()
         {
-            data = null;
-            Initialize();
+            _data = CreateEmptyICellMatrix(Width, Height);
         }
         public bool Contains(ICell item)
         {
-            for (int x = 0; x < this.data.GetLength(0); x++)
+            for (int x = 0; x < this._data.GetLength(0); x++)
             {
-                for (int y = 0; y < this.data.GetLength(1); y++)
+                for (int y = 0; y < this._data.GetLength(1); y++)
                 {
-                    if (this.data[x][y].Id == item.Id)
+                    if (this._data[x][y].Id == item.Id)
                     {
                         return true;
                     }
@@ -80,41 +85,46 @@
         {
             if (cell != null)
             {
-                this.data[cell.X][cell.Y] = cell;
+                this._data[cell.X][cell.Y] = cell;
                 return 1;
             }
             return -1;
         }
         public void Insert(int x, int y, ICell cell)
         {
-            this.data[x][y] = cell;
+            this._data[x][y] = cell;
+            cell.X = x;
+            cell.Y = y;
         }
         public void Remove(ICell cell)
         {
-            this.data[cell.X][cell.Y] = null;
+            this._data[cell.X][cell.Y] = null;
         }
         public void RemoveAt(int x, int y)
         {
-            this.data[x][y] = null;
+            this._data[x][y] = null;
         }
 
-        private void Initialize(int x, int y)
+        private static ICell[][] CreateEmptyICellMatrix(int width, int height)
         {
-            if (x > 0 && y > 0)
+            ICell[][] resultMatrix = new Cell[width][];
+            for (int i = 0; i < width; i++)
             {
-                this.data = new Cell[x][];
-                for (int i = 0; i < x; i++)
+                for (int j = 0; j < height; j++)
                 {
-                    for (int j = 0; j < this.Height; j++)
-                    {
-                        this.data[i] = new Cell[j];
-                    }
+                    resultMatrix[i] = new Cell[height];
                 }
             }
-            else
+
+            for (int i = 0; i < width; i++)
             {
-                throw new ArgumentOutOfRangeException(string.Format("X and Y should be > 0. Values passed: [{0}], [{1}].", x, y));
+                for (int j = 0; j < height; j++)
+                {
+                    resultMatrix[i][j] = new Cell();
+                }
             }
+
+            return resultMatrix;
         }
     }
 }

@@ -3,6 +3,6 @@
     public interface IGlyph
     {
         string Text { get; set; }
-        bool IsGraphic { get; }
+        bool IsImagePath { get; }
     }
 }
