@@ -30,6 +30,7 @@ namespace ProjectRLG.Infrastructure
     using ProjectRLG.Enums;
     using ProjectRLG.Infrastructure.FieldOfView;
     using ProjectRLG.Utilities;
+    using ProjectRLG.Constants;
 
     public class VisualEngine
     {
@@ -302,13 +303,13 @@ namespace ProjectRLG.Infrastructure
                     }
                     else
                     {
-                        //ascii
+                        // ASCII Mode
                         if (_currentMap[cell].IsVisible)
                         {
-                            //if (!this._currentMap[tile.X, tile.Y].Flags.HasFlag(Flags.HasBeenSeen))
-                            //{
-                            //    this._currentMap[tile.X, tile.Y].Flags |= Flags.HasBeenSeen;
-                            //}
+                            if (string.IsNullOrEmpty(_currentMap[cell].GetProperty(PropertyBagConst.HAS_BEEN_SEEN)))
+                            {
+                                _currentMap[cell].SetProperty(PropertyBagConst.HAS_BEEN_SEEN, "true");
+                            }
 
                             if (_highlighterIsOn && _tilesToHighlight.Contains(cell))
                             {
@@ -332,19 +333,19 @@ namespace ProjectRLG.Infrastructure
                                 ASCIIEffects,
                                 LayerDepth);
                         }
-                        //else if (this._currentMap[tile.X, tile.Y].Flags.HasFlag(Flags.HasBeenSeen))
-                        //{
-                        //    spriteBatch.DrawString(
-                        //        this.SpriteFont,
-                        //        this._currentMap[tile.X, tile.Y].DrawString,
-                        //        drawPosition,
-                        //        VisualEngine.TileMask,
-                        //        this.ASCIIRotation,
-                        //        this.ASCIIOrigin,
-                        //        this.ASCIIScale,
-                        //        this.ASCIIEffects,
-                        //        this.LayerDepth);
-                        //}
+                        else if (!string.IsNullOrEmpty(_currentMap[cell].GetProperty(PropertyBagConst.HAS_BEEN_SEEN)))
+                        {
+                            spriteBatch.DrawString(
+                                SpriteFont,
+                                _currentMap[cell].Glyph.Text,
+                                drawPosition,
+                                VisualEngine.TileMask,
+                                ASCIIRotation,
+                                ASCIIOrigin,
+                                ASCIIScale,
+                                ASCIIEffects,
+                                LayerDepth);
+                        }
                     }
                 }
             }

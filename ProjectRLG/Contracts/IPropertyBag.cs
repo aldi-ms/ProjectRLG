@@ -4,6 +4,8 @@
 
     public interface IPropertyBag
     {
-        Dictionary<string, object> PropertyBag { get; set; }
+        string this[string key] { get; set; }
+        string GetProperty(string key);
+        void SetProperty(string key, string value);
     }
 }

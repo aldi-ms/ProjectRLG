@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Constants\PropertyBagConst.cs" />
     <Compile Include="Contracts\IActor.cs" />
     <Compile Include="Contracts\IBaseObject.cs" />
     <Compile Include="Contracts\ICell.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Models\CellCollection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\MapUtils.cs" />
+    <Compile Include="Utilities\MapUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

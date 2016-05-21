@@ -5,13 +5,13 @@
     using ProjectRLG.Infrastructure;
     using ProjectRLG.Models;
 
-    public static class MapUtils
+    public static class MapUtilities
     {
         private static Random _rng;
         private static IGlyph _wallGlyph;
         private static IGlyph _grassGlyph;
 
-        static MapUtils()
+        static MapUtilities()
         {
             _rng = new Random();
             _wallGlyph = new Glyph("#");

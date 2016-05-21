@@ -33,22 +33,20 @@ namespace ProjectRLG.Extensions
             return (uint)((color.A << 24) | (color.R << 16) |
                           (color.G << 8) | (color.B << 0));
         }
-
         /// <summary>
         /// Convert UInt number to XNA Color object.
         /// </summary>
-        /// <param name="color">UInt we want to parse to Color.</param>
+        /// <param name="colorCode">UInt we want to parse to Color.</param>
         /// <returns>XNA Color object.</returns>
-        public static Color ToColor(this uint color)
+        public static Color ToColor(this uint colorCode)
         {
-            byte a = (byte)(color >> 24);
-            byte r = (byte)(color >> 16);
-            byte g = (byte)(color >> 8);
-            byte b = (byte)(color >> 0);
+            byte a = (byte)(colorCode >> 24);
+            byte r = (byte)(colorCode >> 16);
+            byte g = (byte)(colorCode >> 8);
+            byte b = (byte)(colorCode >> 0);
 
             return new Color(r, g, b, a);
         }
-
         /// <summary>
         /// Given H,S,L in range of 0-1
         /// Returns a Color (RGB struct) in range of 0-255

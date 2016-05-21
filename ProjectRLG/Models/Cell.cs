@@ -7,9 +7,11 @@
     public class Cell : ICell
     {
         private IGlyph _cellGlyph;
+        private Dictionary<string, string> _propertyBag;
 
         public Cell()
         {
+            _propertyBag = new Dictionary<string, string>();
             Items = new HashSet<IGameItem>();
             Objects = new HashSet<IMapObject>();
             SpecialObjects = new HashSet<ISpecialObject>();
@@ -54,6 +56,29 @@
                 this._cellGlyph = value;
             }
         }
+        public string this[string key]
+        {
+            get
+            {
+                if (_propertyBag.ContainsKey(key))
+                {
+                    return _propertyBag[key];
+                }
+
+                return null;
+            }
+            set
+            {
+                if (_propertyBag.ContainsKey(key))
+                {
+                    _propertyBag[key] = value;
+                }
+                else
+                {
+                    _propertyBag.Add(key, value);
+                }
+            }
+        }
 
         public T GetAll<T>()
         {
@@ -62,6 +87,14 @@
         public T Get<T>(object obj)
         {
             throw new System.NotImplementedException();
+        }
+        public string GetProperty(string key)
+        {
+            return this[key];
+        }
+        public void SetProperty(string key, string value)
+        {
+            this[key] = value;
         }
     }
 }

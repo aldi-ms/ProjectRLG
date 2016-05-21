@@ -4,7 +4,7 @@
     using System.Runtime.InteropServices;
     using ProjectRLG.Infrastructure.FieldOfView;
 
-    public interface ICell : IBaseObject, IPosition, IFovCell
+    public interface ICell : IBaseObject, IPosition, IFovCell, IPropertyBag
     {
         ITerrain Terrain { get; set; }
         IActor Actor { get; set; }

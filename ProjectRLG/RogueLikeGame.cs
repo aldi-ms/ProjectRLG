@@ -58,16 +58,16 @@
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(base.GraphicsDevice);
 
             // Load resources
             _logFont = Content.Load<SpriteFont>("consolas12");
             _voFont = Content.Load<SpriteFont>("bpmono40bold");
 
             // Load initial game objects
-            IMap testMap = new Map(MapUtils.CreateRandomCellCollection(25, 20));
+            IMap testMap = new Map(MapUtilities.CreateRandomCellCollection(25, 20));
             _vo = new VisualEngine(32, 16, 11, testMap, _voFont);
-            _vo.DeltaTileDrawCoordinates = new Point(4, -6);
+            _vo.DeltaTileDrawCoordinates = new Point(7, 4);
             _vo.ASCIIScale = 0.6f;
         }
         /// <summary>
@@ -111,8 +111,8 @@
         {
             base.GraphicsDevice.Clear(Color.Black);
 
-            _vo.DrawGrid(_graphics.GraphicsDevice, _spriteBatch);
-            _vo.DrawGame(_spriteBatch, new Point(5, 5));
+            _vo.DrawGrid(base.GraphicsDevice, _spriteBatch);
+            _vo.DrawGame(_spriteBatch, new Point(0, 0));
 
             base.Draw(gameTime);
         }
