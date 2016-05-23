@@ -1,9 +1,9 @@
-﻿using ProjectRLG.Enums;
-namespace ProjectRLG.Contracts
+﻿namespace ProjectRLG.Contracts
 {
-    public interface IActor : IMapObject
+    using ProjectRLG.Enums;
+
+    public interface IActor : IMapObject, IPropertyBag
     {
         int Energy { get; }
-        ActorRank Rank { get; }
     }
 }

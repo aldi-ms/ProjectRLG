@@ -1,31 +1,35 @@
 ﻿namespace ProjectRLG.Models
 {
     using System;
+    using System.Collections.Generic;
+    using Microsoft.Xna.Framework;
     using ProjectRLG.Contracts;
-using Microsoft.Xna.Framework;
+    using ProjectRLG.Utilities;
 
-    public class Map : IMap
+    public class Map : BaseObject, IMap
     {
         private ICellCollection _mapCells;
 
         public Map(int width, int height)
+            : this(new CellCollection(width, height))
         {
-            _mapCells = new CellCollection(width, height);
         }
         public Map(ICellCollection cells)
+            : base()
         {
             _mapCells = cells;
         }
 
-        public ICell this[int x, int y] 
+        public int Z { get; private set; }
+        public ICell this[int x, int y]
         {
-            get 
-            { 
-                return _mapCells[x, y]; 
-            }
-            set 
+            get
             {
-                _mapCells[x, y] = value; 
+                return _mapCells[x, y];
+            }
+            set
+            {
+                _mapCells[x, y] = value;
             }
         }
         public ICell this[Point p]
@@ -39,9 +43,6 @@ using Microsoft.Xna.Framework;
                 _mapCells[p.X, p.Y] = value;
             }
         }
-        public int Z { get; private set; }
-        public Guid Id { get; private set; }
-        public string Name { get; set; }
         public ICellCollection Cells
         {
             get
@@ -53,6 +54,21 @@ using Microsoft.Xna.Framework;
                 _mapCells = value;
             }
         }
-        public IGlyph Glyph { get; set; }
+
+        public void LoadActors(IEnumerable<IActor> actors)
+        {
+            foreach (IActor actor in actors)
+            {
+                if (actor.Transform.Equals(default(Transform)) || !this[actor.Transform.Point].IsCellAvailable())
+                {
+                    ICell cell = MapUtilities.GetRandomFreeCell(this);
+                    cell.Actor = actor;
+                }
+                else
+                {
+                    this[actor.Transform.Point].Actor = actor;
+                }
+            }
+        }
     }
 }

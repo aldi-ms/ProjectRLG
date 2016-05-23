@@ -6,6 +6,7 @@
     {
         string this[string key] { get; set; }
         string GetProperty(string key);
+        bool GetPropertyAsBool(string key);
         void SetProperty(string key, string value);
     }
 }

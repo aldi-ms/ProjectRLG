@@ -44,6 +44,7 @@
     <Compile Include="Contracts\ICell.cs" />
     <Compile Include="Contracts\ICellCollection.cs" />
     <Compile Include="Contracts\IFovCellCollection.cs" />
+    <Compile Include="Contracts\ILogger.cs" />
     <Compile Include="Contracts\IMap.cs" />
     <Compile Include="Contracts\IMapObject.cs" />
     <Compile Include="Contracts\IGlyph.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="Contracts\IPosition.cs" />
     <Compile Include="Contracts\ISpecialObject.cs" />
     <Compile Include="Contracts\ITerrain.cs" />
-    <Compile Include="Enums\ActorRank.cs" />
     <Compile Include="Enums\CardinalDirection.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Infrastructure\FieldOfView\FieldOfView.cs" />
@@ -61,6 +61,8 @@
     <Compile Include="Infrastructure\FieldOfView\FOVSettings.cs" />
     <Compile Include="Infrastructure\FieldOfView\MRPAS.cs" />
     <Compile Include="Infrastructure\FieldOfView\ShadowCasting.cs" />
+    <Compile Include="Models\Actor.cs" />
+    <Compile Include="Models\BaseObject.cs" />
     <Compile Include="Models\Glyph.cs" />
     <Compile Include="Infrastructure\MessageLog.cs" />
     <Compile Include="Models\Terrain.cs" />
@@ -68,7 +70,7 @@
     <Compile Include="Models\Map.cs" />
     <Compile Include="Models\Transform.cs" />
     <Compile Include="RogueLikeGame.cs" />
-    <Compile Include="Models\ActorQueue.cs" />
+    <Compile Include="Infrastructure\ActorQueue.cs" />
     <Compile Include="Models\Cell.cs" />
     <Compile Include="Models\CellCollection.cs" />
     <Compile Include="Program.cs" />

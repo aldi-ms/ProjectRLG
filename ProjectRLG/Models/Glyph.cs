@@ -2,20 +2,38 @@
 {
     using ProjectRLG.Contracts;
 
-    public class Glyph : IGlyph
+    public struct Glyph : IGlyph
     {
+        private string _text;
         private bool _isImagePath;
 
-        public Glyph()
-        {
-        }
         public Glyph(string text, bool isImagePath = false)
         {
-            Text = text;
+            _text = text;
             _isImagePath = isImagePath;
         }
 
-        public bool IsImagePath { get; private set; }
-        public string Text { get; set; }
+        public bool IsImagePath
+        {
+            get
+            {
+                return _isImagePath;
+            }
+            private set
+            {
+                _isImagePath = value;
+            }
+        }
+        public string Text
+        {
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                _text = value;
+            }
+        }
     }
 }

@@ -19,11 +19,13 @@
 namespace ProjectRLG.Infrastructure
 {
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using ProjectRLG.Contracts;
     using ProjectRLG.Extensions;
+    using System.Diagnostics;
 
     /*
     * * * * * * *
@@ -42,90 +44,68 @@ namespace ProjectRLG.Infrastructure
         Framework.ColorExtensions).
     --> '!' - denotes end of sequence.
     */
-
-    /// <summary>
-    /// A Message Log used for sending and drawing messages on the screen,
-    /// with support for coloring messages in print string.
-    /// </summary>
     public sealed class MessageLog : IMessageLog
     {
-        private const int TextLeftPad = 5;
-        private readonly int spaceScreenWidth;
+        private const string GREETING = "Welcome-to-\"Project RogueLikeGame\"=v5.SCiENiDE-2016!";
+        private const int TEXT_LEFT_PAD = 5;
 
-        private Color textColor;
-        private StringBuilder[] lines;
-        private SpriteFont spriteFont;
-        private Rectangle rectangle;
-        private Vector2[] lineVectors;
+        private readonly int SpaceScreenWidth;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MessageLog" /> class.
-        /// </summary>
-        /// <param name="spriteBatch">The SpriteBatch used to draw the log on the screen.</param>
-        /// <param name="logRectangle">The rectangle in which to show the log.</param>
-        /// <param name="spriteFont">The Message Log font.</param>
-        public MessageLog(Rectangle logRectangle, SpriteFont spriteFont)
+        private Color _foregroundColor;
+        private StringBuilder[] _lines;
+        private SpriteFont _spriteFont;
+        private Rectangle _zone;
+        private Vector2[] _lineVectors;
+
+        public MessageLog(Rectangle logZone, SpriteFont spriteFont)
         {
-            this.rectangle = logRectangle;
-            this.spriteFont = spriteFont;
+            _zone = logZone;
+            _spriteFont = spriteFont;
 
-            this.spaceScreenWidth = this.TextScreenLength(" ");
+            SpaceScreenWidth = TextScreenLength(" ");
 
             // Default text color
-            this.textColor = Color.Gray;
+            _foregroundColor = Color.Gray;
 
-            int lineCount = this.rectangle.Height / this.FontHeight;
-            this.lines = new StringBuilder[lineCount];
-            this.lineVectors = new Vector2[lineCount];
+            int lineCount = _zone.Height / FontHeight;
+            _lines = new StringBuilder[lineCount];
+            _lineVectors = new Vector2[lineCount];
 
             // Initialize line coordinates, from bottom [0], to top [Length - 1].
             for (int i = 0; i < lineCount; i++)
             {
-                this.lines[i] = new StringBuilder();
+                _lines[i] = new StringBuilder();
 
-                this.lineVectors[i] = new Vector2(
-                    this.rectangle.Left + TextLeftPad,
-                    this.rectangle.Bottom - (i * this.FontHeight));
+                _lineVectors[i] = new Vector2(
+                    _zone.Left + TEXT_LEFT_PAD,
+                    _zone.Bottom - (i * FontHeight));
             }
 
-            this.ShowGreeting();
+            ShowGreeting(GREETING);
         }
 
-        /// <summary>
-        /// Gets or sets the color in which to draw the log text.
-        /// </summary>
-        public Color TextColor
+        public Color ForegroundColor
         {
-            get { return this.textColor; }
-            set { this.textColor = value; }
+            get { return _foregroundColor; }
+            set { _foregroundColor = value; }
         }
-
-        /// <summary>
-        /// Gets the height of the font.
-        /// </summary>
         private int FontHeight
         {
-            get { return this.spriteFont.LineSpacing; }
+            get { return _spriteFont.LineSpacing; }
         }
-
-        /// <summary>
-        /// Send a message to the log to be displayed.
-        /// </summary>
-        /// <param name="text">The string message.</param>
-        /// <returns>True if the message was sent successfuly, false otherwise.</returns>
         public bool SendMessage(string text)
         {
             // Check if the text sent fits in the message rectangle.
-            if (this.TextScreenLength(text) <= this.rectangle.Width)
+            if (this.TextScreenLength(text) <= this._zone.Width)
             {
-                for (int i = this.lines.Length - 1; i > 0; i--)
+                for (int i = this._lines.Length - 1; i > 0; i--)
                 {
-                    this.lines[i].Clear();
-                    this.lines[i].Append(this.lines[i - 1]);
+                    this._lines[i].Clear();
+                    this._lines[i].Append(this._lines[i - 1]);
                 }
 
-                this.lines[0].Clear();
-                this.lines[0].Append(text);
+                this._lines[0].Clear();
+                this._lines[0].Append(text);
 
                 return true;
             }
@@ -138,9 +118,9 @@ namespace ProjectRLG.Infrastructure
 
                 for (int i = nextUnappanededString; i < splitText.Length; i++)
                 {
-                    int textLength = TextLeftPad + this.TextScreenLength(textFirstPart) + this.TextScreenLength(splitText[i]);
+                    int textLength = TEXT_LEFT_PAD + this.TextScreenLength(textFirstPart) + this.TextScreenLength(splitText[i]);
 
-                    if (textLength + this.spaceScreenWidth < this.rectangle.Width)
+                    if (textLength + this.SpaceScreenWidth < this._zone.Width)
                     {
                         textFirstPart.Append(splitText[i]);
                         textFirstPart.Append(" ");
@@ -166,33 +146,23 @@ namespace ProjectRLG.Infrastructure
 
             return false;
         }
-
-        /// <summary>
-        /// Clear the log line content.
-        /// </summary>
         public void ClearLog()
         {
-            for (int i = 0; i < this.lines.Length; i++)
+            for (int i = 0; i < this._lines.Length; i++)
             {
-                this.lines[i].Clear();
+                this._lines[i].Clear();
             }
         }
-
-        /// <summary>
-        /// Draw the Message Log on the screen.
-        /// </summary>
-        /// <remarks>To color string/part of a string to a specific color check ColorMessages.txt.</remarks>
-        /// <param name="spriteBatch">The SpriteBatch object used to draw the log.</param>
         public void DrawLog(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
 
-            for (int i = 0; i < this.lines.Length; i++)
+            for (int i = 0; i < this._lines.Length; i++)
             {
                 #region Colored string draw
 
                 int linePosition = 0;
-                string workText = this.lines[i].ToString();
+                string workText = this._lines[i].ToString();
                 char selector = '\0';
                 StringBuilder color = new StringBuilder(10);
 
@@ -274,14 +244,14 @@ namespace ProjectRLG.Infrastructure
                         color.Clear();
 
                         Vector2 newPosition = new Vector2(
-                            this.lineVectors[i].X + linePosition,
-                            this.lineVectors[i].Y);
+                            this._lineVectors[i].X + linePosition,
+                            this._lineVectors[i].Y);
 
                         // Set the line position for the next string.
                         linePosition += this.TextScreenLength(this.RemoveColorSeq(selectedText, true));
 
                         spriteBatch.DrawString(
-                            this.spriteFont,
+                            this._spriteFont,
                             this.RemoveColorSeq(selectedText),
                             newPosition,
                             parsedColor);
@@ -291,16 +261,16 @@ namespace ProjectRLG.Infrastructure
                     else
                     {
                         Vector2 newPosition = new Vector2(
-                            this.lineVectors[i].X + linePosition,
-                            this.lineVectors[i].Y);
+                            this._lineVectors[i].X + linePosition,
+                            this._lineVectors[i].Y);
 
                         spriteBatch.DrawString(
-                            this.spriteFont,
-                            this.lines[i][k].ToString(),
+                            this._spriteFont,
+                            this._lines[i][k].ToString(),
                             newPosition,
-                            this.textColor);
+                            this._foregroundColor);
 
-                        linePosition += this.TextScreenLength(this.lines[i][k].ToString());
+                        linePosition += this.TextScreenLength(this._lines[i][k].ToString());
                     }
                 }
                 #endregion
@@ -309,38 +279,24 @@ namespace ProjectRLG.Infrastructure
             spriteBatch.End();
         }
 
-        /// <summary>
-        /// Returns the length of a string displayed on the screen.
-        /// </summary>
-        /// <param name="text">The string text.</param>
-        /// <returns>Length of the text drawn on the screen, using this SpriteFont.</returns>
         private int TextScreenLength(string text)
         {
-            string clearedText = this.RemoveColorSeq(text);
-            return (int)this.spriteFont.MeasureString(clearedText).X;
+            string clearedText = RemoveColorSeq(text);
+            return (int)_spriteFont.MeasureString(clearedText).X;
         }
-
-        /// <summary>
-        /// Returns the length of a StringBuilder displayed on the screen.
-        /// </summary>
-        /// <param name="text">The StringBuilder text.</param>
-        /// <returns>Length of the text drawn on the screen, using this SpriteFont.</returns>
         private int TextScreenLength(StringBuilder text)
         {
-            return this.TextScreenLength(text.ToString());
+            return TextScreenLength(text.ToString());
         }
-
-        /// <summary>
-        /// Remove color sequences existant in a string.
-        /// </summary>
-        /// <param name="text">The string to check.</param>
-        /// <param name="breakOnSequence">Indicates whether we should break on 
-        /// sequence start and return the string up to this point.</param>
-        /// <returns>A string cleared from color sequence codes.</returns>
         private string RemoveColorSeq(string text, bool breakOnSequence = false)
         {
-            StringBuilder actualText = new StringBuilder();
+            int idx = text.IndexOf('~');
+            if (idx == -1)
+            {
+                return text;
+            }
 
+            StringBuilder actualText = new StringBuilder();
             for (int i = 0; i < text.Length; i++)
             {
                 if (text[i] == '~')
@@ -358,30 +314,24 @@ namespace ProjectRLG.Infrastructure
 
             return actualText.ToString();
         }
-
-        /// <summary>
-        /// Show a greeting message.
-        /// </summary>
-        private void ShowGreeting()
+        private void ShowGreeting(string greeting)
         {
-            System.Collections.Generic.List<Color> gradient =
-                new System.Collections.Generic.List<Color>();
-
-            for (double i = 0; i < 1; i += 0.02)
+            List<Color> gradient = new List<Color>();
+            float step = (float)1 / greeting.Length;
+            for (double i = 0; i < 1; i += step)
             {
                 gradient.Add(ColorUtilities.HSL2RGB(i, 0.5, 0.5));
             }
 
-            string greeting = "Welcome-to-Canas-Uvighi-RL/RP-Game!-@SCiENiDE-2015";
-
             StringBuilder gradientGreeting = new StringBuilder();
-
             for (int i = 0; i < greeting.Length; i++)
             {
-                gradientGreeting.AppendFormat("~L{0}!{1}", gradient[i].ToUInt(), greeting[i]);
+                gradientGreeting.AppendFormat("~L{0}!{1}",
+                    gradient[(gradient.Count + i) % gradient.Count].ToUInt(),
+                    greeting[i]);
             }
 
-            this.SendMessage(gradientGreeting.ToString());
+            SendMessage(gradientGreeting.ToString());
         }
     }
 }

@@ -1,12 +1,42 @@
 ﻿namespace ProjectRLG.Models
 {
+    using Microsoft.Xna.Framework;
     using ProjectRLG.Contracts;
     using ProjectRLG.Enums;
 
-    public class Transform : IPosition
+    public struct Transform : IPosition
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        private Point _p;
+
+        public int X 
+        {
+            get
+            {
+                return _p.X;
+            }
+            set
+            {
+                _p.X = value;
+            }
+        }
+        public int Y
+        {
+            get
+            {
+                return _p.Y;
+            }
+            set
+            {
+                _p.Y = value;
+            }
+        }
         public CardinalDirection Facing { get; set; }
+        public Point Point
+        {
+            get
+            {
+                return _p;
+            }
+        }
     }
 }

@@ -3,13 +3,15 @@
     using System;
     using System.Collections.Generic;
     using ProjectRLG.Contracts;
+using Microsoft.Xna.Framework;
 
-    public class Cell : ICell
+    public class Cell : BaseObject, ICell
     {
-        private IGlyph _cellGlyph;
+        private Point _p;
+        private ITerrain _terrain;
         private Dictionary<string, string> _propertyBag;
 
-        public Cell()
+        public Cell() : base()
         {
             _propertyBag = new Dictionary<string, string>();
             Items = new HashSet<IGameItem>();
@@ -17,45 +19,6 @@
             SpecialObjects = new HashSet<ISpecialObject>();
         }
 
-        public bool IsTransparent
-        {
-            get { return !Glyph.Text.Equals("#"); }
-        }
-        public bool IsVisible { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public string Name { get; set; }
-        public ITerrain Terrain { get; set; }
-        public IActor Actor { get; set; }
-        public ICell Empty { get; set; }
-        public HashSet<IGameItem> Items { get; set; }
-        public HashSet<IMapObject> Objects { get; set; }
-        public HashSet<ISpecialObject> SpecialObjects { get; set; }
-        public Guid Id { get; set; }
-        public IGlyph Glyph
-        {
-            get
-            {
-                if (Actor != null)
-                {
-                    _cellGlyph = Actor.Glyph;
-                }
-                if (Terrain != null)
-                {
-                    _cellGlyph = Terrain.Glyph;
-                }
-                if (_cellGlyph == null)
-                {
-                    _cellGlyph = new Glyph("er");
-                }
-
-                return _cellGlyph;
-            }
-            set
-            {
-                this._cellGlyph = value;
-            }
-        }
         public string this[string key]
         {
             get
@@ -79,22 +42,95 @@
                 }
             }
         }
+        public bool IsTransparent
+        {
+            get { return !Glyph.Text.Equals("#"); }
+        }
+        public bool IsVisible { get; set; }
+        public int X 
+        {
+            get
+            {
+                return _p.X;
+            }
+            set
+            {
+                _p.X = value;
+            }
+        }
+        public int Y 
+        {
+            get
+            {
+                return _p.Y;
+            }
+            set
+            {
+                _p.Y = value;
+            }
+        }
+        public ITerrain Terrain
+        {
+            get
+            {
+                if (_terrain == null)
+                {
+                    _terrain = new Terrain(new Glyph(" "), 0);
+                }
 
-        public T GetAll<T>()
-        {
-            throw new System.NotImplementedException();
+                return _terrain;
+            }
+            set
+            {
+                _terrain = value;
+            }
         }
-        public T Get<T>(object obj)
+        public IActor Actor { get; set; }
+        public HashSet<IGameItem> Items { get; set; }
+        public HashSet<IMapObject> Objects { get; set; }
+        public HashSet<ISpecialObject> SpecialObjects { get; set; }
+        public Point Point
         {
-            throw new System.NotImplementedException();
+            get
+            {
+                return _p;
+            }
         }
+
         public string GetProperty(string key)
         {
             return this[key];
         }
+        public bool GetPropertyAsBool(string key)
+        {
+            return !string.IsNullOrEmpty(this[key]);
+        }
         public void SetProperty(string key, string value)
         {
             this[key] = value;
+        }
+        public override IGlyph Glyph
+        {
+            get
+            {
+                if (Actor != null)
+                {
+                    return Actor.Glyph;
+                }
+                else if (Terrain != null)
+                {
+                    return Terrain.Glyph;
+                }
+
+                return new Glyph(" ");
+            }
+            set
+            {
+            }
+        }
+        public bool IsCellAvailable()
+        {
+            return (Actor == null && Terrain.Difficulty < 50);
         }
     }
 }

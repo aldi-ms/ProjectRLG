@@ -1,5 +1,7 @@
 ﻿namespace ProjectRLG
 {
+    using System;
+    using System.Collections.Generic;
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
     using Microsoft.Xna.Framework.Input;
@@ -7,12 +9,11 @@
     using ProjectRLG.Infrastructure;
     using ProjectRLG.Models;
     using ProjectRLG.Utilities;
-    using System;
 
     public class RogueLikeGame : Game
     {
-        private const int ScreenWidth = 800;
-        private const int ScreenHeight = 500;
+        private const int SCREEN_WIDTH = 800;
+        private const int SCREEN_HEIGHT = 500;
 
         protected GraphicsDeviceManager _graphics;
         protected SpriteBatch _spriteBatch;
@@ -22,6 +23,9 @@
         private SpriteFont _logFont;
         private SpriteFont _voFont;
         private VisualEngine _vo;
+        private ActorQueue _actorQueue;
+        private MessageLog _messageLog;
+        private IMap _currentMap;
 
         public RogueLikeGame()
         {
@@ -44,10 +48,19 @@
 #else
             Window.TextInput += HandleInput;
 #endif
-            _graphics.PreferredBackBufferWidth = ScreenWidth;
-            _graphics.PreferredBackBufferHeight = ScreenHeight;
+            _graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
+            _graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
             _graphics.ApplyChanges();
             IsMouseVisible = true;
+
+            // Load initial game objects
+            _currentMap = new Map(MapUtilities.CreateRandomCellCollection(25, 20));
+            List<IActor> actors = new List<IActor>()
+            {
+                new Actor("SCiENiDE", 0, 0, new Glyph("@")),
+                new Actor("Kobold", new Glyph("k"))
+            };
+            _currentMap.LoadActors(actors);
 
             base.Initialize();
         }
@@ -64,11 +77,20 @@
             _logFont = Content.Load<SpriteFont>("consolas12");
             _voFont = Content.Load<SpriteFont>("bpmono40bold");
 
-            // Load initial game objects
-            IMap testMap = new Map(MapUtilities.CreateRandomCellCollection(25, 20));
-            _vo = new VisualEngine(32, 16, 11, testMap, _voFont);
+            // Initialize VisualEngine
+            _vo = new VisualEngine(32, 16, 11, _currentMap, _voFont);
             _vo.DeltaTileDrawCoordinates = new Point(7, 4);
             _vo.ASCIIScale = 0.6f;
+
+            // Initialize Message Log
+            Rectangle messageLogZone = new Rectangle(
+                0,
+                _vo.MapDrawboxTileSize.Y * _vo.TileSize,
+                SCREEN_WIDTH - 30,
+                (SCREEN_HEIGHT - 30) - (_vo.MapDrawboxTileSize.Y * _vo.TileSize)); 
+            _messageLog = new MessageLog(messageLogZone, _logFont);
+
+
         }
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -113,6 +135,7 @@
 
             _vo.DrawGrid(base.GraphicsDevice, _spriteBatch);
             _vo.DrawGame(_spriteBatch, new Point(0, 0));
+            _messageLog.DrawLog(_spriteBatch);
 
             base.Draw(gameTime);
         }

@@ -27,7 +27,7 @@ namespace ProjectRLG.Contracts
         /// <summary>
         /// Get or set the foreground color of the text.
         /// </summary>
-        Color TextColor { get; set; }
+        Color ForegroundColor { get; set; }
 
         /// <summary>
         /// Send a message to the log buffer.

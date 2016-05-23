@@ -4,6 +4,7 @@
     using ProjectRLG.Contracts;
     using ProjectRLG.Infrastructure;
     using ProjectRLG.Models;
+    using Microsoft.Xna.Framework;
 
     public static class MapUtilities
     {
@@ -47,6 +48,19 @@
             }
 
             return new CellCollection(cellMatrix);
+        }
+
+        public static ICell GetRandomFreeCell(IMap map)
+        {
+            Point cellCoords;
+            do
+            {
+                cellCoords = new Point(
+                    _rng.Next(0, map.Cells.Width),
+                    _rng.Next(0, map.Cells.Height));
+            } while (!map.IsCellAvailable(cellCoords));
+            
+            return map[cellCoords];
         }
     }
 }

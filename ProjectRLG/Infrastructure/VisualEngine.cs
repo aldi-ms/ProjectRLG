@@ -222,10 +222,10 @@ namespace ProjectRLG.Infrastructure
                 FOVSettings.Method,
                 FOVSettings.Shape);
 
-            Texture2D terrainTexture = null;
-            Texture2D itemTexture = null;
-            Texture2D fringeTexture = null;
-            Texture2D actorTexture = null;
+            //Texture2D terrainTexture = null;
+            //Texture2D itemTexture = null;
+            //Texture2D fringeTexture = null;
+            //Texture2D actorTexture = null;
             Point startTile = GetDrawCoordinatesStart(mapCenter);
 
             spriteBatch.Begin();
@@ -306,7 +306,7 @@ namespace ProjectRLG.Infrastructure
                         // ASCII Mode
                         if (_currentMap[cell].IsVisible)
                         {
-                            if (string.IsNullOrEmpty(_currentMap[cell].GetProperty(PropertyBagConst.HAS_BEEN_SEEN)))
+                            if (!_currentMap[cell].GetPropertyAsBool(PropertyBagConst.HAS_BEEN_SEEN))
                             {
                                 _currentMap[cell].SetProperty(PropertyBagConst.HAS_BEEN_SEEN, "true");
                             }
@@ -333,7 +333,7 @@ namespace ProjectRLG.Infrastructure
                                 ASCIIEffects,
                                 LayerDepth);
                         }
-                        else if (!string.IsNullOrEmpty(_currentMap[cell].GetProperty(PropertyBagConst.HAS_BEEN_SEEN)))
+                        else if (_currentMap[cell].GetPropertyAsBool(PropertyBagConst.HAS_BEEN_SEEN))
                         {
                             spriteBatch.DrawString(
                                 SpriteFont,
