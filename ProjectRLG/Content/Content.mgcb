@@ -25,3 +25,9 @@
 /processorParam:TextureFormat=Compressed
 /build:bpmono40bold.spritefont
 
+#begin dejavu.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:dejavu.spritefont
+

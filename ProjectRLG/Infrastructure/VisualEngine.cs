@@ -306,9 +306,9 @@ namespace ProjectRLG.Infrastructure
                         // ASCII Mode
                         if (_currentMap[cell].IsVisible)
                         {
-                            if (!_currentMap[cell].GetPropertyAsBool(PropertyBagConst.HAS_BEEN_SEEN))
+                            if (!_currentMap[cell].Properties.PropertyExistsAndIsNotNull(PropertyBagConst.HAS_BEEN_SEEN))
                             {
-                                _currentMap[cell].SetProperty(PropertyBagConst.HAS_BEEN_SEEN, "true");
+                                _currentMap[cell].Properties.SetProperty(PropertyBagConst.HAS_BEEN_SEEN, "true");
                             }
 
                             if (_highlighterIsOn && _tilesToHighlight.Contains(cell))
@@ -333,7 +333,7 @@ namespace ProjectRLG.Infrastructure
                                 ASCIIEffects,
                                 LayerDepth);
                         }
-                        else if (_currentMap[cell].GetPropertyAsBool(PropertyBagConst.HAS_BEEN_SEEN))
+                        else if (_currentMap[cell].Properties.PropertyExistsAndIsNotNull(PropertyBagConst.HAS_BEEN_SEEN))
                         {
                             spriteBatch.DrawString(
                                 SpriteFont,

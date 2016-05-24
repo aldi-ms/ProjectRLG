@@ -9,39 +9,14 @@ using Microsoft.Xna.Framework;
     {
         private Point _p;
         private ITerrain _terrain;
-        private Dictionary<string, string> _propertyBag;
 
         public Cell() : base()
         {
-            _propertyBag = new Dictionary<string, string>();
             Items = new HashSet<IGameItem>();
             Objects = new HashSet<IMapObject>();
             SpecialObjects = new HashSet<ISpecialObject>();
         }
 
-        public string this[string key]
-        {
-            get
-            {
-                if (_propertyBag.ContainsKey(key))
-                {
-                    return _propertyBag[key];
-                }
-
-                return null;
-            }
-            set
-            {
-                if (_propertyBag.ContainsKey(key))
-                {
-                    _propertyBag[key] = value;
-                }
-                else
-                {
-                    _propertyBag.Add(key, value);
-                }
-            }
-        }
         public bool IsTransparent
         {
             get { return !Glyph.Text.Equals("#"); }
@@ -97,18 +72,6 @@ using Microsoft.Xna.Framework;
             }
         }
 
-        public string GetProperty(string key)
-        {
-            return this[key];
-        }
-        public bool GetPropertyAsBool(string key)
-        {
-            return !string.IsNullOrEmpty(this[key]);
-        }
-        public void SetProperty(string key, string value)
-        {
-            this[key] = value;
-        }
         public override IGlyph Glyph
         {
             get
@@ -128,9 +91,12 @@ using Microsoft.Xna.Framework;
             {
             }
         }
-        public bool IsCellAvailable()
+        public bool IsCellAvailable
         {
-            return (Actor == null && Terrain.Difficulty < 50);
+            get
+            {
+                return (Actor == null && Terrain.Difficulty < 50);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@
     using Microsoft.Xna.Framework;
     using ProjectRLG.Infrastructure.FieldOfView;
 
-    public interface ICell : IBaseObject, IPosition, IFovCell, IPropertyBag
+    public interface ICell : IBaseObject, IPosition, IFovCell
     {
         ITerrain Terrain { get; set; }
         IActor Actor { get; set; }
@@ -13,6 +13,6 @@
         HashSet<IMapObject> Objects { get; set; }
         HashSet<ISpecialObject> SpecialObjects { get; set; }
 
-        bool IsCellAvailable();
+        bool IsCellAvailable { get; }
     }
 }

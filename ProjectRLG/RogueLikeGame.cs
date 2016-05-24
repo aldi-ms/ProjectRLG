@@ -57,7 +57,7 @@
             _currentMap = new Map(MapUtilities.CreateRandomCellCollection(25, 20));
             List<IActor> actors = new List<IActor>()
             {
-                new Actor("SCiENiDE", 0, 0, new Glyph("@")),
+                new Actor("SCiENiDE", new Glyph("@")),
                 new Actor("Kobold", new Glyph("k"))
             };
             _currentMap.LoadActors(actors);

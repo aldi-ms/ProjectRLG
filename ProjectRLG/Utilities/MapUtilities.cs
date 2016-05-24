@@ -58,7 +58,7 @@
                 cellCoords = new Point(
                     _rng.Next(0, map.Cells.Width),
                     _rng.Next(0, map.Cells.Height));
-            } while (!map.IsCellAvailable(cellCoords));
+            } while (!map[cellCoords].IsCellAvailable);
             
             return map[cellCoords];
         }

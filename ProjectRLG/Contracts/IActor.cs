@@ -2,7 +2,7 @@
 {
     using ProjectRLG.Enums;
 
-    public interface IActor : IMapObject, IPropertyBag
+    public interface IActor : IMapObject
     {
         int Energy { get; }
     }

@@ -59,7 +59,7 @@
         {
             foreach (IActor actor in actors)
             {
-                if (actor.Transform.Equals(default(Transform)) || !this[actor.Transform.Point].IsCellAvailable())
+                if (actor.Transform.Equals(default(Transform)) || !this[actor.Transform.Point].IsCellAvailable)
                 {
                     ICell cell = MapUtilities.GetRandomFreeCell(this);
                     cell.Actor = actor;
