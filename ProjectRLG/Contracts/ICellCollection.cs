@@ -13,5 +13,6 @@
         void Insert(int x, int y, ICell cell);
         void Remove(ICell cell);
         void RemoveAt(int x, int y);
+        bool CellExists(int x, int y);
     }
 }

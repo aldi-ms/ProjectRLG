@@ -182,9 +182,9 @@ namespace ProjectRLG.Infrastructure.FieldOfView
 
         void ClearFov()
         {
-            for (int y = 0; y < grid.Height; y++)
+            for (int x = 0; x < grid.X; x++)
             {
-                for (int x = 0; x < grid.Width; x++)
+                for (int y = 0; y < grid.Y; y++)
                 {
                     grid[x, y].IsVisible = false;
                 }

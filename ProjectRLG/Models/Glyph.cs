@@ -1,15 +1,23 @@
 ﻿namespace ProjectRLG.Models
 {
+    using Microsoft.Xna.Framework;
     using ProjectRLG.Contracts;
 
-    public struct Glyph : IGlyph
+    public class Glyph : IGlyph
     {
         private string _text;
         private bool _isImagePath;
+        private Color _foreground;
+        private Color _background;
 
         public Glyph(string text, bool isImagePath = false)
+            : this(text, Color.White, isImagePath)
+        { }
+        public Glyph(string text, Color foreground, bool isImagePath = false)
         {
             _text = text;
+            _foreground = foreground;
+            _background = Color.Black;
             _isImagePath = isImagePath;
         }
 
@@ -33,6 +41,28 @@
             set
             {
                 _text = value;
+            }
+        }
+        public Color ForegroundColor
+        {
+            get
+            {
+                return _foreground;
+            }
+            set
+            {
+                _foreground = value;
+            }
+        }
+        public Color BackgroundColor
+        {
+            get
+            {
+                return _background;
+            }
+            set
+            {
+                _background = value;
             }
         }
     }

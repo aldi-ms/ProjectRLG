@@ -9,6 +9,7 @@
     using ProjectRLG.Infrastructure;
     using ProjectRLG.Models;
     using ProjectRLG.Utilities;
+    using ProjectRLG.Enums;
 
     public class RogueLikeGame : Game
     {
@@ -23,23 +24,23 @@
         private SpriteFont _logFont;
         private SpriteFont _voFont;
         private VisualEngine _vo;
-        private ActorQueue _actorQueue;
+        //private ActorQueue _actorQueue;
         private MessageLog _messageLog;
         private IMap _currentMap;
+        private IActor _player;
 
         public RogueLikeGame()
         {
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
+
             _graphics = new GraphicsDeviceManager(this);
             _graphics.IsFullScreen = false;
+            _graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
+            _graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
+            _graphics.ApplyChanges();
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
 #if OpenGL
@@ -47,94 +48,70 @@
             onTextEntered += HandleInput;
 #else
             Window.TextInput += HandleInput;
+            _onTextEntered += HandleInput;
 #endif
-            _graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
-            _graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
-            _graphics.ApplyChanges();
-            IsMouseVisible = true;
-
-            // Load initial game objects
-            _currentMap = new Map(MapUtilities.CreateRandomCellCollection(25, 20));
-            List<IActor> actors = new List<IActor>()
-            {
-                new Actor("SCiENiDE", new Glyph("@")),
-                new Actor("Kobold", new Glyph("k"))
-            };
-            _currentMap.LoadActors(actors);
+            // Load game objects required to create game
+            _currentMap = new Map(MapUtilities.CreateRandomCellCollection(20, 15));
+            _player = new Actor("SCiENiDE", new Glyph("@"));
+            _currentMap.LoadActors(new List<IActor>() { _player });
 
             base.Initialize();
         }
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             _spriteBatch = new SpriteBatch(base.GraphicsDevice);
 
-            // Load resources
+            // Load fonts
             _logFont = Content.Load<SpriteFont>("consolas12");
             _voFont = Content.Load<SpriteFont>("bpmono40bold");
 
-            // Initialize VisualEngine
-            _vo = new VisualEngine(32, 16, 11, _currentMap, _voFont);
-            _vo.DeltaTileDrawCoordinates = new Point(7, 4);
+            // Visual Engine
+            _vo = new VisualEngine(32, 6, 10, _currentMap, _voFont);
+            _vo.DeltaTileDrawCoordinates = new Point(3, 7);
             _vo.ASCIIScale = 0.6f;
 
-            // Initialize Message Log
+            // Message Log
             Rectangle messageLogZone = new Rectangle(
                 0,
-                _vo.MapDrawboxTileSize.Y * _vo.TileSize,
+                _vo.MapDrawboxTileSize.X * _vo.TileSize,
                 SCREEN_WIDTH - 30,
-                (SCREEN_HEIGHT - 30) - (_vo.MapDrawboxTileSize.Y * _vo.TileSize)); 
+                (SCREEN_HEIGHT - 30) - (_vo.MapDrawboxTileSize.X * _vo.TileSize));
             _messageLog = new MessageLog(messageLogZone, _logFont);
-
-
         }
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
         protected override void UnloadContent()
         {
-
-
-            // TODO: Unload any non ContentManager content here
+            Content.Unload();
         }
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             KeyboardState keyState = Keyboard.GetState();
-#if OpenGL
-            if (keyState.IsKeyDown(Keys.Back) && _prevKeyState.IsKeyUp(Keys.Back))
-            {
-                onTextEntered.Invoke(this, new TextInputEventArgs('\b'));
-            }
-            if (keyState.IsKeyDown(Keys.Enter) && _prevKeyState.IsKeyUp(Keys.Enter))
-            {
-                onTextEntered.Invoke(this, new TextInputEventArgs('\r'));
-            }
-            // Handle other special characters here (such as tab)
-#endif
-            _prevKeyState = keyState;
 
+            // Send special characters
+            CheckForKey(keyState, Keys.Right);
+            CheckForKey(keyState, Keys.Left);
+            CheckForKey(keyState, Keys.Up);
+            CheckForKey(keyState, Keys.Down);
+            //CheckForKey(keyState, Keys.NumPad0);
+            //CheckForKey(keyState, Keys.NumPad1);
+            //CheckForKey(keyState, Keys.NumPad2);
+            //CheckForKey(keyState, Keys.NumPad3);
+            //CheckForKey(keyState, Keys.NumPad4);
+            //CheckForKey(keyState, Keys.NumPad5);
+            //CheckForKey(keyState, Keys.NumPad6);
+            //CheckForKey(keyState, Keys.NumPad7);
+            //CheckForKey(keyState, Keys.NumPad8);
+            //CheckForKey(keyState, Keys.NumPad9);
+
+            _prevKeyState = keyState;
             base.Update(gameTime);
         }
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             base.GraphicsDevice.Clear(Color.Black);
 
             _vo.DrawGrid(base.GraphicsDevice, _spriteBatch);
-            _vo.DrawGame(_spriteBatch, new Point(0, 0));
+            _vo.DrawGame(_spriteBatch, _player.Transform.Position);
             _messageLog.DrawLog(_spriteBatch);
 
             base.Draw(gameTime);
@@ -149,16 +126,108 @@
         }
         private void HandleInput(object sender, TextInputEventArgs e)
         {
-            int charCode = (int)e.Character;
-            switch (charCode)
+            int charCode = (int)e.Character.ToString().ToUpper()[0];
+
+            #region CONTROLS
+
+            Point actorPositionOld = _player.Transform.Position;
+            Point actorPositionNew;
+            switch ((Keys)charCode)
             {
-                case (int)Keys.Escape:
+                case (Keys)3:   // [ctrl + c]
+                case (Keys)17:  // [ctrl + q]
+                case Keys.Escape:
                     {
                         Exit();
                         break;
                     }
+
+                case Keys.D8:
+                case Keys.NumPad8:
+                case Keys.W:
+                case Keys.K:
+                case Keys.Up:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.North);
+                        break;
+                    }
+
+                case Keys.D2:
+                case Keys.NumPad2:
+                case Keys.S:
+                case Keys.J:
+                case Keys.Down:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.South);
+                        break;
+                    }
+
+                case Keys.D4:
+                case Keys.NumPad4:
+                case Keys.A:
+                case Keys.H:
+                case Keys.Left:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.West);
+                        break;
+                    }
+
+                case Keys.D6:
+                case Keys.NumPad6:
+                case Keys.D:
+                case Keys.L:
+                case Keys.Right:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.East);
+                        break;
+                    }
+
+                case Keys.D7:
+                case Keys.NumPad7:
+                case Keys.Y:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.NorthWest);
+                        break;
+                    }
+
+                case Keys.D9:
+                case Keys.NumPad9:
+                case Keys.U:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.NorthEast);
+                        break;
+                    }
+
+                case Keys.D1:
+                case Keys.NumPad1:
+                case Keys.B:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.SouthWest);
+                        break;
+                    }
+
+                case Keys.D3:
+                case Keys.NumPad3:
+                case Keys.N:
+                    {
+                        actorPositionNew = _player.Move(CardinalDirection.SouthEast);
+                        break;
+                    }
+
                 default:
-                    break;
+                    {
+                        _messageLog.SendMessage(string.Format("Unknown command - [{0}].", (Keys)charCode));
+                        break;
+                    }
+            }
+
+            #endregion
+        }
+        private void CheckForKey(KeyboardState currentKeyState, Keys key)
+        {
+            if (currentKeyState.IsKeyDown(key) && _prevKeyState.IsKeyUp(key))
+            {
+                _onTextEntered.Invoke(this, new TextInputEventArgs((char)key));
             }
         }
     }

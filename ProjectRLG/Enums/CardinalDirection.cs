@@ -3,7 +3,7 @@
     // 7 0 4
     // 3 x 1
     // 6 2 5
-    public enum CardinalDirection : byte
+    public enum CardinalDirection
     {
         North = 0,
         East = 1,

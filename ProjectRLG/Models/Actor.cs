@@ -1,16 +1,18 @@
 ﻿namespace ProjectRLG.Models
 {
     using System;
+    using System.Collections.Generic;
+    using Microsoft.Xna.Framework;
     using ProjectRLG.Contracts;
-using System.Collections.Generic;
+    using ProjectRLG.Enums;
+    using ProjectRLG.Extensions;
 
     public class Actor : BaseObject, IActor
     {
         private Transform _transform;
-        private Dictionary<string, string> _propertyBag;
 
         public Actor(string name, Glyph glyph, int energy = 50)
-            : this(name, 0, 0, glyph, energy, new Dictionary<string,string>())
+            : this(name, 0, 0, glyph, energy, new Dictionary<string, string>())
         {
         }
         public Actor(string name, int x, int y, Glyph glyph, int energy, Dictionary<string, string> _properties)
@@ -19,14 +21,14 @@ using System.Collections.Generic;
             Name = name;
             Glyph = glyph;
             Energy = energy;
+            _transform = new Transform();
             _transform.X = x;
             _transform.Y = y;
             _transform.Facing = Enums.CardinalDirection.South;
-            _propertyBag = new Dictionary<string, string>();
         }
 
         public int Energy { get; private set; }
-        public Transform Transform 
+        public Transform Transform
         {
             get
             {
@@ -36,6 +38,31 @@ using System.Collections.Generic;
             {
                 _transform = value;
             }
+        }
+        public IMap CurrentMap { get; set; }
+
+        public Point Move(CardinalDirection dir)
+        {
+            if (CurrentMap == null)
+            {
+                return this.Transform.Position;
+            }
+
+            Point newPosition = Transform.Position + dir.GetDeltaCoordinate();
+            if (!CurrentMap.Cells.CellExists(newPosition.X, newPosition.Y))
+            {
+                return this.Transform.Position;
+            }
+
+            if (CurrentMap[newPosition].IsCellAvailable)
+            {
+                CurrentMap[Transform.Position].Actor = null;
+                CurrentMap[newPosition].Actor = this;
+                Transform.Position = newPosition;
+                return this.Transform.Position;
+            }
+
+            return this.Transform.Position;
         }
     }
 }

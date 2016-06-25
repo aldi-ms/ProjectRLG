@@ -1,6 +1,7 @@
 ﻿namespace ProjectRLG
 {
     using System;
+    using ProjectRLG.Infrastructure;
 
 #if WINDOWS || LINUX
     /// <summary>
@@ -14,10 +15,17 @@
         [STAThread]
         public static void Main()
         {
+            //try
+            //{
             using (var game = new RogueLikeGame())
             {
                 game.Run();
             }
+            //}
+            //catch (Exception ex)
+            //{
+            //    ProjectRLG.Infrastructure.Logger.Error(ex, "Program.Main");
+            //}
         }
     }
 #endif

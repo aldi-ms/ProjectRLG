@@ -5,8 +5,8 @@
     public interface IFovCellCollection<TFovCell>
         where TFovCell : IFovCell
     {
-        int Height { get; }
-        int Width { get; }
+        int X { get; }
+        int Y { get; }
         ICell this[int x, int y] { get; set; }
     }
 }

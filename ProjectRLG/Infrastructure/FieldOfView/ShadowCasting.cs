@@ -47,7 +47,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
 
         public override void ComputeFOV()
         {
-            maxDepth = Math.Max(Map.grid.Height, Map.grid.Height);
+            maxDepth = Math.Max(Map.grid.X, Map.grid.Y);
 
             for (int octant = 1; octant < 9; octant++)
             {

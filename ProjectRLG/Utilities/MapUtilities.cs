@@ -16,33 +16,33 @@
         {
             _rng = new Random();
             _wallGlyph = new Glyph("#");
-            _grassGlyph = new Glyph(",");
+            _grassGlyph = new Glyph(",", Color.Green);
         }
 
-        public static ICellCollection CreateRandomCellCollection(int width, int height)
+        public static ICellCollection CreateRandomCellCollection(int x, int y)
         {
-            ICell[][] cellMatrix = new Cell[width][];
-            for (int i = 0; i < width; i++)
+            ICell[][] cellMatrix = new Cell[x][];
+            for (int i = 0; i < x; i++)
             {
-                for (int j = 0; j < height; j++)
-                {
-                    cellMatrix[i] = new Cell[height];
-                }
+                cellMatrix[i] = new Cell[y];                
             }
 
             byte difficulty;
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < x; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < y; j++)
                 {
                     IGlyph randomGlyph = _rng.Next(0, 4) == 0 ? _wallGlyph : _grassGlyph;
                     difficulty = randomGlyph.Text.Equals("#") ? (byte)100 : (byte)5;
+                    ITerrain terrain = new Terrain(
+                        new Glyph(randomGlyph.Text, randomGlyph.ForegroundColor),
+                        difficulty);
+
                     cellMatrix[i][j] = new Cell()
                     {
-                        X = i,
-                        Y = j,
+                        Position = new Point(i, j),
                         Name = string.Format("cell[{0}, {1}]", i, j),
-                        Terrain = new Terrain(randomGlyph, difficulty)
+                        Terrain = terrain
                     };
                 }
             }
@@ -56,8 +56,8 @@
             do
             {
                 cellCoords = new Point(
-                    _rng.Next(0, map.Cells.Width),
-                    _rng.Next(0, map.Cells.Height));
+                    _rng.Next(0, map.Cells.X),
+                    _rng.Next(0, map.Cells.Y));
             } while (!map[cellCoords].IsCellAvailable);
             
             return map[cellCoords];

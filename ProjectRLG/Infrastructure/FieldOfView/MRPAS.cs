@@ -45,7 +45,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
             ViewPointX = 0;
             ViewPointY = 0;
             lightWalls = true;
-            maxRange = Math.Max(map.grid.Width, map.grid.Height);
+            maxRange = Math.Max(map.grid.Y, map.grid.X);
             shadowMap = new ShadowMap();
         }
 
@@ -104,7 +104,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
 
             y = ViewPointY + deltaY;
 
-            if (y >= 0 && y < Map.grid.Height)
+            if (y >= 0 && y < Map.grid.Y)
             {
                 bool keepScanning = false;
 
@@ -114,7 +114,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
                     double slopePerCell = 1.0 / (double)(currIteration + 1);
                     int currentCell = (int)(minimumScanSlope / slopePerCell);
                     int xMin = Math.Max(0, ViewPointX - currIteration);
-                    int xMax = Math.Min(Map.grid.Width - 1, ViewPointX + currIteration);
+                    int xMax = Math.Min(Map.grid.X - 1, ViewPointX + currIteration);
 
                     for (x = ViewPointX + (currentCell * deltaX); x >= xMin && x <= xMax; x += deltaX)
                     {
@@ -132,7 +132,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
 
                     y += deltaY;
 
-                    if (!keepScanning || y < 0 || y >= Map.grid.Height || minimumScanSlope == 1.0 || currIteration == maxRange)
+                    if (!keepScanning || y < 0 || y >= Map.grid.Y || minimumScanSlope == 1.0 || currIteration == maxRange)
                         break;
 
                     currIteration++;
@@ -148,7 +148,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
 
             x = ViewPointX + deltaX;
 
-            if (x >= 0 && x < Map.grid.Height)
+            if (x >= 0 && x < Map.grid.X)
             {
                 bool keepScanning = false;
 
@@ -158,7 +158,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
                     double slopePerCell = 1.0 / (double)(currIteration + 1);
                     int currentCell = (int)(minimumScanSlope / slopePerCell);
                     int yMin = Math.Max(0, ViewPointY - currIteration);
-                    int yMax = Math.Min(Map.grid.Height - 1, ViewPointY + currIteration);
+                    int yMax = Math.Min(Map.grid.Y - 1, ViewPointY + currIteration);
 
                     for (y = ViewPointY + (currentCell * deltaY); y >= yMin && y <= yMax; y += deltaY)
                     {
@@ -175,7 +175,7 @@ namespace ProjectRLG.Infrastructure.FieldOfView
                     }
 
                     x += deltaX;
-                    if (!keepScanning || x < 0 || x >= Map.grid.Height || minimumScanSlope == 1.0 || currIteration == maxRange)
+                    if (!keepScanning || x < 0 || x >= Map.grid.X || minimumScanSlope == 1.0 || currIteration == maxRange)
                         break;
 
                     currIteration++;

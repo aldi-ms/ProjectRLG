@@ -64,11 +64,15 @@ using Microsoft.Xna.Framework;
         public HashSet<IGameItem> Items { get; set; }
         public HashSet<IMapObject> Objects { get; set; }
         public HashSet<ISpecialObject> SpecialObjects { get; set; }
-        public Point Point
+        public Point Position
         {
             get
             {
                 return _p;
+            }
+            set
+            {
+                _p = value;
             }
         }
 
@@ -87,9 +91,7 @@ using Microsoft.Xna.Framework;
 
                 return new Glyph(" ");
             }
-            set
-            {
-            }
+            set { }
         }
         public bool IsCellAvailable
         {

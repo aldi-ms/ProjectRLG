@@ -67,9 +67,9 @@ namespace ProjectRLG.Infrastructure.FieldOfView
 
         protected bool IsInMap(int x, int y)
         {
-            if (x < 0 || x >= map.grid.Height)
+            if (x < 0 || x >= map.grid.X)
                 return false;
-            if (y < 0 || y >= map.grid.Height)
+            if (y < 0 || y >= map.grid.X)
                 return false;
 
             return true;

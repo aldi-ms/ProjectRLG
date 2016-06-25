@@ -4,7 +4,7 @@
     using ProjectRLG.Contracts;
     using ProjectRLG.Enums;
 
-    public struct Transform : IPosition
+    public class Transform : IPosition
     {
         private Point _p;
 
@@ -31,11 +31,15 @@
             }
         }
         public CardinalDirection Facing { get; set; }
-        public Point Point
+        public Point Position
         {
             get
             {
                 return _p;
+            }
+            set
+            {
+                _p = value;
             }
         }
     }

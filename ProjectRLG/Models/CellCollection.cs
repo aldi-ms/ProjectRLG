@@ -4,16 +4,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using ProjectRLG.Contracts;
+    using ProjectRLG.Infrastructure;
 
     public class CellCollection : ICellCollection
     {
         private ICell[][] _data;
 
-        public CellCollection(int width, int height)
+        public CellCollection(int x, int y)
         {
-            width = Math.Abs(width);
-            height = Math.Abs(height);
-            _data = CreateEmptyICellMatrix(width, height);
+            x = Math.Abs(x);
+            y = Math.Abs(y);
+            _data = CreateEmptyICellMatrix(x, y);
         }
         public CellCollection(ICell[][] cells)
         {
@@ -32,21 +33,21 @@
         {
             get
             {
-                return this.Width * this.Height;
+                return this.Y * this.X;
             }
         }
-        public int Width
-        {
-            get
-            {
-                return _data.Length;
-            }
-        }
-        public int Height
+        public int Y
         {
             get
             {
                 return _data[0].Length;
+            }
+        }
+        public int X
+        {
+            get
+            {
+                return _data.Length;
             }
         }
         public ICell this[int x, int y]
@@ -55,7 +56,6 @@
             {
                 return _data[x][y];
             }
-
             set
             {
                 _data[x][y] = value;
@@ -64,7 +64,7 @@
 
         public void Clear()
         {
-            _data = CreateEmptyICellMatrix(Width, Height);
+            _data = CreateEmptyICellMatrix(Y, X);
         }
         public bool Contains(ICell item)
         {
@@ -104,21 +104,22 @@
         {
             this._data[x][y] = null;
         }
-
-        private static ICell[][] CreateEmptyICellMatrix(int width, int height)
+        public bool CellExists(int x, int y)
         {
-            ICell[][] resultMatrix = new Cell[width][];
-            for (int i = 0; i < width; i++)
+            return !(x < 0 || x >= X || y < 0 || y >= Y);
+        }
+
+        private static ICell[][] CreateEmptyICellMatrix(int x, int y)
+        {
+            ICell[][] resultMatrix = new Cell[x][];
+            for (int i = 0; i < x; i++)
             {
-                for (int j = 0; j < height; j++)
-                {
-                    resultMatrix[i] = new Cell[height];
-                }
+                resultMatrix[i] = new Cell[y];
             }
 
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < x; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < y; j++)
                 {
                     resultMatrix[i][j] = new Cell();
                 }

@@ -5,6 +5,6 @@ namespace ProjectRLG.Contracts
     {
         int X { get; set; }
         int Y { get; set; }
-        Point Point { get; }
+        Point Position { get; set; }
     }
 }

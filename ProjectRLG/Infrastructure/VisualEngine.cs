@@ -34,7 +34,7 @@ namespace ProjectRLG.Infrastructure
 
     public class VisualEngine
     {
-        private static readonly Color TileMask = Color.DarkSlateGray;
+        private static readonly Color TileMask = Color.DarkGray;
 
         private bool _highlighterIsOn;
         private bool _graphicMode;
@@ -45,6 +45,7 @@ namespace ProjectRLG.Infrastructure
         private Dictionary<string, Texture2D> _spriteDict;
         private FieldOfView<ICell> _fieldOfView;
         private ContentManager _content;
+        private Point _mapDrawboxTiles;
 
         public VisualEngine(
             int tileSize,
@@ -61,21 +62,22 @@ namespace ProjectRLG.Infrastructure
             int y,
             IMap map,
             SpriteFont gameFont)
-        : this(false, tileSize, new Point(x, y), map, null, gameFont)
+            : this(false, tileSize, new Point(x, y), map, null, gameFont)
         {
         }
         private VisualEngine(
             bool useGraphicMode,
             int tileSize,
             Point mapDrawboxTileSize,
-            IMap map, 
+            IMap map,
             ContentManager content = null,
             SpriteFont spriteFont = null)
         {
             _graphicMode = useGraphicMode;
             _tileSize = tileSize;
-            MapDrawboxTileSize = mapDrawboxTileSize;
+
             Map = map;
+            MapDrawboxTileSize = mapDrawboxTileSize;
             FOVSettings = new FOVSettings();
 
             // Set defaults
@@ -147,7 +149,27 @@ namespace ProjectRLG.Infrastructure
                 }
             }
         }
-        public Point MapDrawboxTileSize { get; set; }
+        public Point MapDrawboxTileSize
+        {
+            get
+            {
+                return _mapDrawboxTiles;
+            }
+            set
+            {
+                if (value.X >= Map.Cells.X)
+                {
+                    value.X = Map.Cells.X - 1;
+                }
+
+                if (value.Y >= Map.Cells.Y)
+                {
+                    value.Y = Map.Cells.Y - 1;
+                }
+
+                _mapDrawboxTiles = value;
+            }
+        }
         public int TopMargin { get; set; }
         public int LeftMargin { get; set; }
         public SpriteFont SpriteFont { get; set; }
@@ -191,15 +213,15 @@ namespace ProjectRLG.Infrastructure
             int xStop = this.MapDrawboxTileSize.X * this._tileSize;
             int yStop = this.MapDrawboxTileSize.Y * this._tileSize;
 
-            for (int x = this.LeftMargin; x <= xStop + this.LeftMargin; x += this._tileSize)
+            for (int x = this.LeftMargin; x <= yStop + this.LeftMargin; x += this._tileSize)
             {
-                Rectangle rect = new Rectangle(x, this.LeftMargin, 1, yStop);
+                Rectangle rect = new Rectangle(x, this.LeftMargin, 1, xStop);
                 spriteBatch.Draw(simpleTexture, rect, Color.Wheat);
             }
 
-            for (int y = this.TopMargin; y <= yStop + this.TopMargin; y += this._tileSize)
+            for (int y = this.TopMargin; y <= xStop + this.TopMargin; y += this._tileSize)
             {
-                Rectangle rect = new Rectangle(this.TopMargin, y, xStop, 1);
+                Rectangle rect = new Rectangle(this.TopMargin, y, yStop, 1);
                 spriteBatch.Draw(simpleTexture, rect, Color.Wheat);
             }
 
@@ -235,8 +257,8 @@ namespace ProjectRLG.Infrastructure
                 for (int y = 0; y < this.MapDrawboxTileSize.Y; y++)
                 {
                     Vector2 drawPosition = new Vector2(
-                                               LeftMargin + (_tileSize * x) + DeltaTileDrawCoordinates.X,
-                                               TopMargin + (_tileSize * y) + DeltaTileDrawCoordinates.Y);
+                                               TopMargin + (_tileSize * y) + DeltaTileDrawCoordinates.Y,
+                                               LeftMargin + (_tileSize * x) + DeltaTileDrawCoordinates.X);
                     Point cell = new Point(startTile.X + x, startTile.Y + y);
 
                     if (_graphicMode)
@@ -326,7 +348,7 @@ namespace ProjectRLG.Infrastructure
                                 SpriteFont,
                                 _currentMap[cell].Glyph.Text,
                                 drawPosition,
-                                ASCIIColor,
+                                _currentMap[cell].Glyph.ForegroundColor,
                                 ASCIIRotation,
                                 ASCIIOrigin,
                                 ASCIIScale,
@@ -378,6 +400,17 @@ namespace ProjectRLG.Infrastructure
                                   mapCenter.X - (MapDrawboxTileSize.X / 2),
                                   mapCenter.Y - (MapDrawboxTileSize.Y / 2));
 
+            // Check coordinates higher bound > 0
+            if (startPoint.X + MapDrawboxTileSize.X >= _currentMap.Cells.X)
+            {
+                startPoint.X = _currentMap.Cells.X - MapDrawboxTileSize.X;
+            }
+
+            if (startPoint.Y + MapDrawboxTileSize.Y >= _currentMap.Cells.Y)
+            {
+                startPoint.Y = _currentMap.Cells.Y - MapDrawboxTileSize.Y;
+            }
+
             // Check coordinates lower bound < 0
             if (startPoint.X < 0)
             {
@@ -387,17 +420,6 @@ namespace ProjectRLG.Infrastructure
             if (startPoint.Y < 0)
             {
                 startPoint.Y = 0;
-            }
-
-            // Check coordinates higher bound > 0
-            if (startPoint.X + MapDrawboxTileSize.X >= _currentMap.Cells.Height)
-            {
-                startPoint.X = _currentMap.Cells.Height - MapDrawboxTileSize.X;
-            }
-
-            if (startPoint.Y + MapDrawboxTileSize.Y >= _currentMap.Cells.Width)
-            {
-                startPoint.Y = _currentMap.Cells.Width - MapDrawboxTileSize.Y;
             }
 
             return startPoint;

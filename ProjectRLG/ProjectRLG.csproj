@@ -44,7 +44,6 @@
     <Compile Include="Contracts\ICell.cs" />
     <Compile Include="Contracts\ICellCollection.cs" />
     <Compile Include="Contracts\IFovCellCollection.cs" />
-    <Compile Include="Contracts\ILogger.cs" />
     <Compile Include="Contracts\IMap.cs" />
     <Compile Include="Contracts\IMapObject.cs" />
     <Compile Include="Contracts\IGlyph.cs" />
@@ -61,6 +60,7 @@
     <Compile Include="Infrastructure\FieldOfView\FOVSettings.cs" />
     <Compile Include="Infrastructure\FieldOfView\MRPAS.cs" />
     <Compile Include="Infrastructure\FieldOfView\ShadowCasting.cs" />
+    <Compile Include="Infrastructure\Logger.cs" />
     <Compile Include="Models\Actor.cs" />
     <Compile Include="Models\BaseObject.cs" />
     <Compile Include="Models\Glyph.cs" />
@@ -76,6 +76,7 @@
     <Compile Include="Models\CellCollection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Extensions\DirectionExtensions.cs" />
     <Compile Include="Utilities\MapUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
